@@ -21,7 +21,7 @@ class Bandit:
     def update(self, x):
         self.N += 1
         self.p_estimate = ((self.N - 1) * self.p_estimate + x) / self.N
-        #self.p_estimate = (self.p_estimate + x) / self.N  # done this way because the sample mean is also probability
+        # self.p_estimate = (self.p_estimate + x) / self.N  # done this way because the sample mean is also probability
         # this is true because the values are either 0 or 1 and by calculating the sample mean we also calculate the
         # win rate or the Maximum Likelihood Estimate
 
@@ -40,12 +40,13 @@ def experiment():
         # use the epsilon greedy strategy to select the next bandit
         if np.random.random() < EPS:  # make a random choice
             num_times_explored += 1
-            j = np.random.choice([0, 1, 2])  # we need to choose a bandit here but the get its index
+            j = np.random.randint(len(bandits))
+        # j = np.random.choice([0, 1, 2])  # we need to choose a bandit here but the get its index
         else:  # choose the optimal choice that you have found so far
-            num_times_explored += 1
+            num_times_exploited += 1
             j = np.argmax([b.p_estimate for b in bandits])
 
-        if j == optimal_j:
+        if j == optimal_j:  # the index with the true optimal bandit
             num_optimal += 1  # count the number of times that you actually made the optimal decision
 
         # now pull the arm of the bandit that you chose to play
@@ -68,12 +69,16 @@ def experiment():
     print('num_times selected the optimal bandit: ', num_optimal)
 
     # plot the results
-    cummulative_rewards = np.cumsum(rewards)
-    win_rates = cummulative_rewards / (np.arange(NUM_TRIALS) + 1)
+    cumulative_rewards = np.cumsum(rewards)
+    print('cumulative rewards: ', cumulative_rewards)
+    win_rates = cumulative_rewards / (np.arange(NUM_TRIALS) + 1)
+    print('iterations to divide cum rewards: ', np.arange(NUM_TRIALS))  # i want to see what it looks like
+    print('iterations starting from one', np.arange(NUM_TRIALS) + 1)  # i want to see what it looks like
     plt.plot(win_rates)
-    plt.plot(np.ones(NUM_TRIALS) * np.max(BANDIT_PROBABILITIES))
+    plt.plot(np.ones(NUM_TRIALS) * np.max(BANDIT_PROBABILITIES))  # plotted to see our win rate if we had only
+    # chosen the optimal bandit right from the start
     plt.show()
 
 
 if __name__ == "__main__":
-  experiment()
+    experiment()
