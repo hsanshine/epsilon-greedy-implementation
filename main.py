@@ -20,7 +20,8 @@ class Bandit:
 
     def update(self, x):
         self.N += 1
-        self.p_estimate = (self.p_estimate + x) / self.N  # done this way because the sample mean is also probability
+        self.p_estimate = ((self.N - 1) * self.p_estimate + x) / self.N
+        #self.p_estimate = (self.p_estimate + x) / self.N  # done this way because the sample mean is also probability
         # this is true because the values are either 0 or 1 and by calculating the sample mean we also calculate the
         # win rate or the Maximum Likelihood Estimate
 
@@ -74,4 +75,5 @@ def experiment():
     plt.show()
 
 
-experiment()
+if __name__ == "__main__":
+  experiment()
